@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.app.Main</mainClass>
+                            <mainClass>BasicProducerExample</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
