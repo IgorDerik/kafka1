@@ -22,7 +22,7 @@ public class BasicProducerExample {
         Producer<Integer, String> producer = new KafkaProducer<>(props);
 
         for (int i=0; i<5; i++) {
-            ProducerRecord<Integer, String> data = new ProducerRecord<>("test", 0, "message-new");
+            ProducerRecord<Integer, String> data = new ProducerRecord<>("producer-example", 0, "message-new");
             producer.send(data);
         }
 
