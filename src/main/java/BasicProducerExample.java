@@ -19,13 +19,12 @@ public class BasicProducerExample {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
-        Producer<Integer, String> producer = new KafkaProducer<>(props);
+        Producer<String, String> producer = new KafkaProducer<>(props);
 
         for (int i=0; i<5; i++) {
-            ProducerRecord<Integer, String> data = new ProducerRecord<>("producer-example", 0, "message-new");
+            ProducerRecord<String, String> data = new ProducerRecord<>("producer-example", "key", "message-new");
             producer.send(data);
         }
-
 
         producer.close();
     }
