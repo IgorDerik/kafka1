@@ -19,18 +19,20 @@ public class BasicProducerExample {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
-        Producer<String, String> producer = new KafkaProducer<String, String>(props);
-        TestCallback callback = new TestCallback();
-        Random rnd = new Random();
-        for (long i = 0; i < 100 ; i++) {
+        Producer<String, String> producer = new KafkaProducer<>(props);
+//        TestCallback callback = new TestCallback();
+//        Random rnd = new Random();
+//        for (long i = 0; i < 100 ; i++) {
             ProducerRecord<String, String> data = new ProducerRecord<String, String>(
-                    "test", "key-" + i, "message-"+i );
-            producer.send(data, callback);
-        }
+                    "test", "key-new", "message-new" );
+//            producer.send(data, callback);
+            producer.send(data);
+//        }
 
         producer.close();
     }
 
+    /*
     private static class TestCallback implements Callback {
 
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
@@ -43,5 +45,6 @@ public class BasicProducerExample {
             }
         }
     }
+    */
 
 }
