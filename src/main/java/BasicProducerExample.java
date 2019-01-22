@@ -19,32 +19,15 @@ public class BasicProducerExample {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
-        Producer<String, String> producer = new KafkaProducer<>(props);
-//        TestCallback callback = new TestCallback();
-//        Random rnd = new Random();
-//        for (long i = 0; i < 100 ; i++) {
-            ProducerRecord<String, String> data = new ProducerRecord<String, String>(
-                    "test", "key-new", "message-new" );
-//            producer.send(data, callback);
+        Producer<Integer, String> producer = new KafkaProducer<>(props);
+
+        for (int i=0; i<5; i++) {
+            ProducerRecord<Integer, String> data = new ProducerRecord<>("test", 0, "message-new");
             producer.send(data);
-//        }
+        }
+
 
         producer.close();
     }
-
-    /*
-    private static class TestCallback implements Callback {
-
-        public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-            if (e != null) {
-                System.out.println("Error while producing message to topic :" + recordMetadata);
-                e.printStackTrace();
-            } else {
-                String message = String.format("sent message to topic:%s partition:%s  offset:%s", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
-                System.out.println(message);
-            }
-        }
-    }
-    */
 
 }
