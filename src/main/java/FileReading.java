@@ -10,7 +10,7 @@ import java.util.Properties;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
-public class TestFileReading {
+public class FileReading {
 
     public static void main(String[] args) throws Exception {
 

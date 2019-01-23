@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>TestFileReading</mainClass>
+                            <mainClass>FileReading</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
