@@ -3,6 +3,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,10 +26,10 @@ public class FileReading {
 
 //        ProducerRecord<String, String> data = new ProducerRecord<>("hotels10","");
 
-        Path filePath = Paths.get(args[0]);
+//        Path filePath = Paths.get(args[0]);
         ForkJoinPool forkJoinPool = new ForkJoinPool(2);
-        Stream<String> stringStream = Files.readAllLines(filePath).parallelStream();
-        forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<String, String>("hotels10",record)))).get();
+        Stream<String> stringStream = Files.lines(Paths.get(args[0])).parallel();
+        forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>("hotels10",record)))).get();
 
 //        producer.send(data);
 
