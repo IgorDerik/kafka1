@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>BasicProducerExample</mainClass>
+                            <mainClass>TestFileReading</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

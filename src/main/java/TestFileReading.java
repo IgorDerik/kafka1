@@ -1,16 +1,18 @@
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Stream;
 
-public class BasicProducerExample {
+public class TestFileReading {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception {
 
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "sandbox-hdp.hortonworks.com:6667");
@@ -21,12 +23,17 @@ public class BasicProducerExample {
 
         Producer<String, String> producer = new KafkaProducer<>(props);
 
-        for (int i=0; i<5; i++) {
-            ProducerRecord<String, String> data = new ProducerRecord<>("producer-example", "key", "message-new");
-            producer.send(data);
-        }
+//        ProducerRecord<String, String> data = new ProducerRecord<>("hotels10","");
+
+        Path filePath = Paths.get(args[0]);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
+        Stream<String> stringStream = Files.readAllLines(filePath).parallelStream();
+        forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<String, String>("hotels10",record)))).get();
+
+//        producer.send(data);
 
         producer.close();
+
     }
 
 }
