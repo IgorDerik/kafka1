@@ -27,8 +27,8 @@ public class FileReading {
 //        ProducerRecord<String, String> data = new ProducerRecord<>("hotels10","");
 
 //        Path filePath = Paths.get(args[0]);
-        ForkJoinPool forkJoinPool = new ForkJoinPool(2);
-        Stream<String> stringStream = Files.lines(Paths.get(args[0])).parallel();
+        ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+        Stream<String> stringStream = Files.newBufferedReader(Paths.get(args[0])).lines().parallel();
         forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>("hotels10",record)))).get();
 
 //        producer.send(data);

@@ -9,6 +9,8 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
+src/main/resources/train.csv
+
 .idea/
 
 # Compiled class file
