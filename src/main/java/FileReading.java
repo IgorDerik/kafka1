@@ -28,7 +28,7 @@ public class FileReading {
 
         List<String> stringList = new ArrayList<>();
 
-        final long limitPointer = 1000;
+        final long limitPointer = Long.parseLong(args[1]);
         String line = "";
         long currLimitPointer = limitPointer;
         while (raf.getFilePointer() < raf.length()) {
@@ -44,7 +44,7 @@ public class FileReading {
             System.out.println("TOTAL SIZE: " + totalSize);
             ForkJoinPool forkJoinPool = new ForkJoinPool(4);
             Stream<String> stringStream = stringList.parallelStream();
-            forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>(args[1],record)))).get();
+            forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>(args[2],record)))).get();
             //forkJoinPool.submit(() -> stringStream.forEach( System.out::println )).get();
 
 
