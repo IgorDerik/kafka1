@@ -3,10 +3,9 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
@@ -24,17 +23,38 @@ public class FileReading {
 
         Producer<String, String> producer = new KafkaProducer<>(props);
 
-//        ProducerRecord<String, String> data = new ProducerRecord<>("hotels10","");
+        long totalSize = 0;
+        RandomAccessFile raf = new RandomAccessFile(args[0], "r");
 
-//        Path filePath = Paths.get(args[0]);
-        ForkJoinPool forkJoinPool = new ForkJoinPool(4);
-        Stream<String> stringStream = Files.newBufferedReader(Paths.get(args[0])).lines().parallel();
-        forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>("hotels10",record)))).get();
+        List<String> stringList = new ArrayList<>();
 
-//        producer.send(data);
+        final long limitPointer = 1000;
+        String line = "";
+        long currLimitPointer = limitPointer;
+        while (raf.getFilePointer() < raf.length()) {
 
+            System.out.println("Pointer: "+raf.getFilePointer());
+
+            while ( (raf.getFilePointer() < currLimitPointer) && ( (line = raf.readLine()) != null) ) {
+                stringList.add(line);
+            }
+            //stringList.forEach( System.out::println );
+            //System.out.println( stringList.size() );
+            totalSize = totalSize+stringList.size();
+            System.out.println("TOTAL SIZE: " + totalSize);
+            ForkJoinPool forkJoinPool = new ForkJoinPool(4);
+            Stream<String> stringStream = stringList.parallelStream();
+            forkJoinPool.submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>(args[1],record)))).get();
+            //forkJoinPool.submit(() -> stringStream.forEach( System.out::println )).get();
+
+
+            stringList.clear();
+
+            currLimitPointer = currLimitPointer + limitPointer;
+        }
+
+        //System.out.println(totalSize);
         producer.close();
-
     }
 
 }
