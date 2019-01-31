@@ -11,8 +11,6 @@ buildNumber.properties
 
 src/main/resources/train.csv
 
-.idea/
-
 # Compiled class file
 *.class
 

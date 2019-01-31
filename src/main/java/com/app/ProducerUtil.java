@@ -18,15 +18,15 @@ public class ProducerUtil {
     /**
      * Method to send messages to kafka topic from a text file (like csv, txt, etc.)
      * Each line to be considered as a message
-     * @param props kafka producer properties
+     * @param producer kafka producer
      * @param topic target kafka topic
      * @param filePath path to the file
      * @param limitPointer file pointer to split a large file into collections of messages
      * @param parallelismDegree define the desired number of threads to proceed a stream
      */
-    public static void sendFromFile(Properties props, String topic, String filePath, long limitPointer, int parallelismDegree) {
+    public static void sendFromFile(Producer<String, String> producer, String topic, String filePath, long limitPointer, int parallelismDegree) {
 
-        Producer<String, String> producer = new KafkaProducer<>(props);
+        //Producer<String, String> producer = new KafkaProducer<>(props);
 
         long totalSize = 0; //debug var
 
