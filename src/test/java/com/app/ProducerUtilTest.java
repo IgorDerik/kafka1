@@ -1,29 +1,82 @@
 package com.app;
 
+import com.github.charithe.kafka.EphemeralKafkaBroker;
+import com.github.charithe.kafka.KafkaJunitRule;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
-
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import static org.junit.Assert.*;
 
 public class ProducerUtilTest {
 
-    @ClassRule
-    public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1,true,1,"test");
+    @Rule
+    public KafkaJunitRule kafkaRule = new KafkaJunitRule(EphemeralKafkaBroker.create());
 
     @Test
-    public void sendFromFile() {
+    public void sendFromHotels10File() throws ExecutionException, InterruptedException {
 
-        Map<String, Object> senderProps = KafkaTestUtils.producerProps(embeddedKafka);
-        Producer<String, String> producer = new KafkaProducer<>(senderProps);
+        KafkaProducer<String, String> producer = kafkaRule.helper().createStringProducer();
 
-        producer.send(new ProducerRecord<>("test","some message"));
+        List<String> testList = Arrays.asList("0,195,2,0,8803,0,3,151,1236,82",
+                "1,66,3,0,12009,,1,0,9,6/26/2015",
+                "2,66,2,0,12009,1,2,50,368,95",
+                "3,3,2,3,66,0,6,105,35,25",
+                "4,3,2,3,23,0,6,105,35,82",
+                "5,3,2,3,3,0,6,105,35,8",
+                "6,3,2,0,3,1,6,105,35,15",
+                "7,23,2,1,23,0,3,151,1236,30",
+                "8,23,2,1,8278,0,2,50,368,91",
+                "9,23,2,1,8278,0,2,50,368,0");
 
-//        ProducerUtil.sendFromFile(producer, "test", "src/main/resources/test.csv", 1000L, 2);
+        ProducerUtil.sendFromFile(producer, "hotels10", "src/test/resources/hotels10.csv", 100L, 2);
+        List<String> result = kafkaRule.helper().consumeStrings("hotels10",10).get();
+        assertEquals(10, result.size());
+
+        testList.forEach( line -> assertTrue(result.contains(line)) );
+    }
+
+    @Test
+    public void sendFromTest491File() throws ExecutionException, InterruptedException {
+
+        KafkaProducer<String, String> producer = kafkaRule.helper().createStringProducer();
+
+        List<String> someLinesFromTestList = Arrays.asList("288,2015-09-13 09:39:40,2,3,215,780,38000,,1038,0,0,10,2015-11-14,2015-11-15,2,0,1,24780,6,3,106,160",
+                "284,2015-06-19 15:12:42,2,3,215,646,51733,580.2441,1038,0,0,10,2015-06-25,2015-06-26,1,0,1,41272,6,4,8,1401",
+                "11,2015-08-10 13:35:02,11,3,214,120,44496,,56,0,0,10,2015-08-18,2015-08-21,2,1,1,20813,6,6,70,312",
+                "12,2015-06-03 10:45:51,2,3,57,342,5021,,57,0,0,10,2015-06-05,2015-06-08,2,0,1,11353,1,2,50,699",
+                "13,2015-06-19 10:16:08,2,3,57,342,5021,,57,0,0,5,2015-06-25,2015-06-26,2,0,1,8826,1,4,47,1501",
+                "14,2015-07-14 08:24:18,2,3,57,342,5021,,57,0,0,5,2015-08-03,2015-08-04,2,0,1,8228,1,2,198,371",
+                "15,2015-07-14 08:48:48,2,3,57,342,5021,,57,0,0,5,2015-08-04,2015-08-09,2,0,1,1886,1,2,198,789",
+                "16,2015-07-22 11:34:00,2,3,57,342,5021,,57,0,0,5,2015-08-16,2015-08-19,2,1,1,8268,1,2,50,682",
+                "17,2015-07-23 13:00:59,2,3,57,342,5021,,57,0,0,5,2015-08-01,2015-08-09,3,1,1,12008,1,2,50,686",
+                "18,2015-08-18 12:37:10,2,3,57,342,5021,,57,0,0,5,2015-08-19,2015-08-20,2,0,1,8243,1,2,50,409",
+                "68,2015-10-01 08:44:16,2,3,70,47,25914,,300,0,0,10,2015-10-03,2015-10-04,2,0,1,5497,1,3,182,79",
+                "69,2015-11-11 08:27:18,2,3,70,47,14566,,300,0,0,10,2015-12-24,2015-12-25,2,0,1,8227,1,3,104,67",
+                "70,2015-11-12 05:33:00,2,3,70,47,14566,,300,0,0,10,2016-01-01,2016-01-03,2,0,1,8796,1,3,104,1003",
+                "71,2015-07-16 15:50:48,2,3,66,220,35388,7804.5246,350,0,0,10,2016-06-02,2016-06-06,4,0,1,468,1,3,48,153",
+                "72,2015-07-17 18:50:15,2,3,66,220,35388,4332.5761,350,0,0,0,2016-06-09,2016-06-10,3,1,1,23116,6,6,70,761",
+                "73,2015-07-28 03:31:45,2,3,66,220,35388,5166.9987,350,0,0,10,2016-06-08,2016-06-11,4,0,1,8289,1,6,107,36",
+                "74,2015-08-01 20:32:11,2,3,66,220,35388,4934.0977,350,0,0,3,2016-06-01,2016-06-05,4,0,1,8739,1,6,144,4",
+                "75,2015-08-13 18:15:21,2,3,66,220,35388,5300.2877,350,0,0,10,2016-06-06,2016-06-08,4,0,1,8790,1,6,199,5",
+                "76,2015-08-28 07:08:10,2,3,66,220,35388,4596.0898,350,0,0,10,2016-05-31,2016-06-01,4,0,1,8213,1,6,68,275",
+                "108,2015-01-23 23:26:45,2,3,115,952,17194,,415,1,0,5,2015-06-13,2015-06-15,2,0,1,8799,1,6,46,1463",
+                "109,2015-11-19 15:33:47,2,3,66,448,25538,10613.4461,419,0,0,3,2015-12-29,2015-12-31,1,0,1,45775,1,0,63,1248",
+                "110,2015-11-20 08:17:14,2,3,66,314,4868,9943.9757,419,0,0,3,2016-01-14,2016-01-15,1,0,1,43130,1,0,63,1001",
+                "111,2015-01-13 14:22:06,2,3,66,348,47997,2456.0591,424,0,0,2,2015-02-03,2015-02-07,2,0,1,8254,1,2,50,365",
+                "112,2015-04-29 13:33:21,2,3,66,153,25334,254.7284,430,0,1,9,2015-05-24,2015-05-26,2,0,1,8250,1,2,50,628",
+                "113,2015-08-24 11:56:05,2,3,66,153,50542,5818.2268,430,0,0,10,2015-12-26,2015-12-27,2,0,1,8743,1,6,144,24",
+                "114,2015-03-27 15:50:01,2,3,66,351,274,531.1755,436,0,0,9,2015-04-04,2015-04-06,2,0,1,11357,1,2,50,674",
+                "115,2015-05-28 06:58:55,2,3,66,351,274,1891.7866,436,0,1,2,2015-06-05,2015-06-08,1,0,1,8254,1,2,50,365",
+                "388,2015-08-22 10:34:17,2,3,66,189,52284,,1334,0,0,10,2015-08-27,2015-08-30,2,0,1,26227,6,2,198,384");
+
+        ProducerUtil.sendFromFile(producer, "test491", "src/test/resources/test491.csv", 1000L, 4);
+        List<String> result = kafkaRule.helper().consumeStrings("test491",491).get();
+        assertEquals(491, result.size());
+
+        someLinesFromTestList.forEach( line -> assertTrue(result.contains(line)) );
     }
 
 }

@@ -1,14 +1,11 @@
 package com.app;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
@@ -26,9 +23,7 @@ public class ProducerUtil {
      */
     public static void sendFromFile(Producer<String, String> producer, String topic, String filePath, long limitPointer, int parallelismDegree) {
 
-        //Producer<String, String> producer = new KafkaProducer<>(props);
-
-        long totalSize = 0; //debug var
+        long totalSize = 0;
 
         RandomAccessFile raf = null;
         try {
@@ -46,15 +41,15 @@ public class ProducerUtil {
         try {
             while (Objects.requireNonNull(raf).getFilePointer() < raf.length()) {
 
-                System.out.println("CURRENT FILE POINTER: " + raf.getFilePointer()); //debug info
+                System.out.println("CURRENT FILE POINTER: " + raf.getFilePointer());
 
                 while ((raf.getFilePointer() < currLimitPointer) && ((line = raf.readLine()) != null)) {
                     stringList.add(line);
                 }
 
-                System.out.println("CURRENT MESSAGE COLLECTION SIZE " + stringList.size()); //debug info
+                System.out.println("CURRENT MESSAGE COLLECTION SIZE " + stringList.size());
                 totalSize = totalSize + stringList.size();
-                System.out.println("TOTAL MESSAGES SENT: " + totalSize); //debug info
+                System.out.println("TOTAL MESSAGES SENT: " + totalSize);
 
                 Stream<String> stringStream = stringList.parallelStream();
 

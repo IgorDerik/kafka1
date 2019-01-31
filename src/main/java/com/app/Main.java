@@ -1,7 +1,8 @@
 package com.app;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
-
 import java.util.Properties;
 
 public class Main {
@@ -15,8 +16,10 @@ public class Main {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
-        //Properties props, String topic, String filePath, long limitPointer, int parallelismDegree
-//        ProducerUtil.sendFromFile(props, args[0], args[1], Long.parseLong(args[2]), Integer.parseInt(args[3]));
+        Producer<String, String> producer = new KafkaProducer<>(props);
+
+        //Producer<String, String> producer, String topic, String filePath, long limitPointer, int parallelismDegree
+        ProducerUtil.sendFromFile(producer, args[0], args[1], Long.parseLong(args[2]), Integer.parseInt(args[3]));
 
     }
 
