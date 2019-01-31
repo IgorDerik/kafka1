@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>FileReading</mainClass>
+                            <mainClass>com.app.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
