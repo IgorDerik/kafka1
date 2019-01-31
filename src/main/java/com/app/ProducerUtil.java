@@ -34,8 +34,6 @@ public class ProducerUtil {
 
         long currLimitPointer = limitPointer;
 
-        ForkJoinPool forkJoinPool = new ForkJoinPool(parallelismDegree);
-
         try {
             while (Objects.requireNonNull(raf).getFilePointer() < raf.length()) {
 
@@ -45,7 +43,7 @@ public class ProducerUtil {
                     stringList.add(line);
                 }
 
-                System.out.println("Current collection size" + stringList.size()); //debug info
+                System.out.println("Current collection size " + stringList.size()); //debug info
                 totalSize = totalSize + stringList.size();
                 System.out.println("TOTAL SIZE: " + totalSize); //debug info
 
@@ -53,6 +51,8 @@ public class ProducerUtil {
                 Stream<String> stringStream = stringList.parallelStream();
 
                 stringStream.forEach(System.out::println); //debug info
+
+                ForkJoinPool forkJoinPool = new ForkJoinPool(parallelismDegree); //!
 
                 forkJoinPool
                         .submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>(topic, record))))
@@ -66,7 +66,7 @@ public class ProducerUtil {
             e.printStackTrace();
         }
 
-        System.out.println("Current total size" + totalSize); //debug info
+        System.out.println("Current total size " + totalSize); //debug info
 
         producer.close();
     }

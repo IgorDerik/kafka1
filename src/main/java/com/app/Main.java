@@ -15,6 +15,7 @@ public class Main {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
+        //Properties props, String topic, String filePath, long limitPointer, int parallelismDegree
         ProducerUtil.sendFromFile(props, args[0], args[1], Long.parseLong(args[2]), Integer.parseInt(args[3]));
 
     }
