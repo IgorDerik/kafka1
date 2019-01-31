@@ -15,6 +15,15 @@ import java.util.stream.Stream;
 
 public class ProducerUtil {
 
+    /**
+     * Method to send messages to kafka topic from a text file (like csv, txt, etc.)
+     * Each line to be considered as a message
+     * @param props kafka producer properties
+     * @param topic target kafka topic
+     * @param filePath path to the file
+     * @param limitPointer file pointer to split a large file into collections of messages
+     * @param parallelismDegree define the desired number of threads to proceed a stream
+     */
     public static void sendFromFile(Properties props, String topic, String filePath, long limitPointer, int parallelismDegree) {
 
         Producer<String, String> producer = new KafkaProducer<>(props);
@@ -29,9 +38,7 @@ public class ProducerUtil {
         }
 
         List<String> stringList = new ArrayList<>();
-
         String line = "";
-
         long currLimitPointer = limitPointer;
 
         ForkJoinPool forkJoinPool = new ForkJoinPool(parallelismDegree);
@@ -39,21 +46,17 @@ public class ProducerUtil {
         try {
             while (Objects.requireNonNull(raf).getFilePointer() < raf.length()) {
 
-                System.out.println("Current pointer: " + raf.getFilePointer()); //debug info
+                System.out.println("CURRENT FILE POINTER: " + raf.getFilePointer()); //debug info
 
                 while ((raf.getFilePointer() < currLimitPointer) && ((line = raf.readLine()) != null)) {
                     stringList.add(line);
                 }
 
-                System.out.println("Current collection size " + stringList.size()); //debug info
+                System.out.println("CURRENT MESSAGE COLLECTION SIZE " + stringList.size()); //debug info
                 totalSize = totalSize + stringList.size();
-                System.out.println("TOTAL SIZE: " + totalSize); //debug info
+                System.out.println("TOTAL MESSAGES SENT: " + totalSize); //debug info
 
                 Stream<String> stringStream = stringList.parallelStream();
-
-                //stringStream.forEach(System.out::println); //debug info
-                //stringStream.forEach(record -> producer.send(new ProducerRecord<>(topic, record)));
-                //ForkJoinPool forkJoinPool = new ForkJoinPool(parallelismDegree); //!
 
                 forkJoinPool
                         .submit(() -> stringStream.forEach(record -> producer.send(new ProducerRecord<>(topic, record))))
@@ -66,8 +69,6 @@ public class ProducerUtil {
         } catch (IOException|InterruptedException|ExecutionException e) {
             e.printStackTrace();
         }
-
-        System.out.println("Current total size " + totalSize); //debug info
 
         producer.close();
     }
