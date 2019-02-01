@@ -6,7 +6,8 @@ Each line of the file is considered as a message.
 
 ## Getting Started
 
-The recommend way of use is to build jar using maven plugin and run it with parameters using java command.
+Please be sure to configure your kafka properties in Main class.
+After that, the recommend way of use is to build jar using maven plugin and run it with parameters using java command.
 
 * Build project with maven assembly plugin:
 ```
