@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -46,7 +47,7 @@ public class ProducerUtil {
                 while ((raf.getFilePointer() < currLimitPointer) && ((line = raf.readLine()) != null)) {
                     stringList.add(line);
                 }
-
+                line = new Date().getTime() + line;
                 System.out.println("CURRENT MESSAGE COLLECTION SIZE " + stringList.size());
                 totalSize = totalSize + stringList.size();
                 System.out.println("TOTAL MESSAGES SENT: " + totalSize);
