@@ -9,6 +9,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        long startTime = System.nanoTime();
+
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "sandbox-hdp.hortonworks.com:6667");
         props.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -20,6 +22,11 @@ public class Main {
 
         //Producer<String, String> producer, String topic, String filePath, long limitPointer, int parallelismDegree
         ProducerUtil.sendFromFile(producer, args[0], args[1], Long.parseLong(args[2]), Integer.parseInt(args[3]));
+
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime-startTime;
+
+        System.out.println("Execution time in nanoseconds: " + timeElapsed);
 
     }
 
