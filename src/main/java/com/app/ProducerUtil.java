@@ -45,7 +45,6 @@ public class ProducerUtil {
                 System.out.println("CURRENT FILE POINTER: " + raf.getFilePointer());
 
                 while ((raf.getFilePointer() < currLimitPointer) && ((line = raf.readLine()) != null)) {
-                    line = new Date().getTime() + line;
                     stringList.add(line);
                 }
                 System.out.println("CURRENT MESSAGE COLLECTION SIZE " + stringList.size());
